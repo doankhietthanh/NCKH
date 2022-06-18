@@ -113,19 +113,26 @@ onValue(ref(database, "sensor"), (snapshot) => {
     console.log(optionSelects.value);
   });
 });
-
+console.log(nameSensor);
 document.querySelector(".btn-save").addEventListener("click", () => {
-  set(ref(database, `sensor/${nameSensor}/threshold`), {
-    min: numberS[0].value,
-    max: numberS[1].value,
-  });
-  set(ref(database, `sensor/${nameSensor}/color`), {
-    min: minColor,
-    max: maxColor,
-  });
+  if (nameSensor === "" || nameSensor === "default") {
+    alert("Please select sensor");
+  } else {
+    set(ref(database, `sensor/${nameSensor}/threshold`), {
+      min: numberS[0].value,
+      max: numberS[1].value,
+    });
 
-  loader.style.display = "flex";
-  setTimeout(() => {
-    window.location.reload();
-  }, 3000);
+    if (minColor !== "" && maxColor !== "") {
+      set(ref(database, `sensor/${nameSensor}/color`), {
+        min: minColor,
+        max: maxColor,
+      });
+    }
+
+    loader.style.display = "flex";
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+  }
 });
