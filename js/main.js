@@ -7,73 +7,229 @@ import {
   ref,
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
 
-const LIST_COLOR = {
-  "--strip-red": "linear-gradient(to bottom, #ff6767, #ff4545)",
-  "--strip-yellow": "linear-gradient(to bottom, #ffd800, #ffb300)",
-  "--strip-green": "linear-gradient(to bottom, #66ffa2, #20c15d)",
-  "--strip-purple": "linear-gradient(to bottom, #9b00ff, #4500b3)",
-};
-
 const containerElement = document.querySelector(".container");
+let maxLength = 0;
 
-const randomColor = () => {
-  const colors = Object.keys(LIST_COLOR);
-  const random = Math.floor(Math.random() * colors.length);
-  return colors[random];
-};
+// onValue(ref(database, "location"), (snapshot) => {
+//   const values = snapshot.val();
+//   const docs = Object.keys(values).map((key) => {
+//     return [key, values[key]];
+//   });
 
-onValue(ref(database, "location"), (snapshot) => {
+//   let ids = [];
+//   let names = [];
+//   let gateway = [];
+//   let colors = [];
+
+//   docs.forEach((doc, index) => {
+//     ids.push(doc[0]);
+//     names.push(doc[1].name);
+//     gateway.push(doc[1].gateway);
+//     colors.push(doc[1].color);
+//   });
+
+//   names.forEach((name, index) => {
+//     if (
+//       document.querySelector(`.filter-item[name="${names[index]}"]`) !== null
+//     ) {
+//       console.log(names[index]);
+//       document
+//         .querySelector(".filter-control")
+//         .removeChild(
+//           document.querySelector(`.filter-item[name="${names[index]}"]`)
+//         );
+//     }
+//   });
+
+//   checkboxElementCreated("all");
+//   names.forEach((name) => {
+//     const divFilterItem = checkboxElementCreated(name);
+//     document.querySelector(".filter-control").appendChild(divFilterItem);
+//   });
+
+//   const checkboxAll = document.querySelector("#option-all");
+//   const checkboxes = document.querySelectorAll(
+//     ".filter-control input[type=checkbox]"
+//   );
+
+//   let checkboxItems = [];
+//   checkboxes.forEach((checkbox) => {
+//     checkboxAll.checked = true;
+//     ids.forEach((id, index) => {
+//       if (names[index] === checkbox.id) {
+//         containerElement.appendChild(
+//           cardElementCreated(colors[index], names[index], gateway[index])
+//         );
+//       }
+//     });
+//     if (checkbox !== checkboxAll) {
+//       checkboxItems.push(checkbox);
+//     }
+//   });
+
+//   checkboxItems.forEach((checkbox) => {
+//     checkbox.addEventListener("change", (e) => {
+//       const checkboxItemChecked = document.querySelectorAll(
+//         ".filter-control input[type=checkbox]:checked"
+//       );
+//       if (checkboxItemChecked.length === checkboxItems.length) {
+//         checkboxAll.checked = true;
+//       } else {
+//         checkboxAll.checked = false;
+//       }
+//     });
+//   });
+
+//   checkboxAll.addEventListener("change", () => {
+//     checkAll(checkboxAll);
+//   });
+
+//   checkboxes.forEach((checkbox) => {
+//     checkbox.checked = true;
+//     checkbox.addEventListener("change", () => {
+//       unCheckAll(checkbox);
+
+//       if (checkbox.checked === true) {
+//         if (checkbox === checkboxAll) {
+//           containerElement.innerHTML = "";
+//           ids.forEach((id, index) => {
+//             containerElement.appendChild(
+//               cardElementCreated(colors[index], names[index], gateway[index])
+//             );
+//           });
+//         } else {
+//           ids.forEach((id, index) => {
+//             if (names[index] === checkbox.id) {
+//               containerElement.appendChild(
+//                 cardElementCreated(colors[index], names[index], gateway[index])
+//               );
+//             }
+//           });
+//         }
+//       } else {
+//         if (checkbox === checkboxAll) {
+//           ids.forEach((id, index) => {
+//             containerElement.removeChild(
+//               containerElement.querySelector(`.card[name="${names[index]}"]`)
+//             );
+//           });
+//         } else {
+//           ids.forEach((id, index) => {
+//             if (names[index] === checkbox.id) {
+//               containerElement.removeChild(
+//                 containerElement.querySelector(`.card[name="${names[index]}"]`)
+//               );
+//             }
+//           });
+//         }
+//       }
+//     });
+//   });
+
+//   const checkAll = (myCheckBox) => {
+//     if (myCheckBox.checked === true) {
+//       checkboxes.forEach((checkbox) => {
+//         checkbox.checked = true;
+//       });
+//     } else {
+//       checkboxes.forEach((checkbox) => {
+//         checkbox.checked = false;
+//       });
+//     }
+//   };
+
+//   const unCheckAll = (myCheckBox) => {
+//     if (myCheckBox.checked === false) {
+//       checkboxAll.checked = false;
+//     }
+//   };
+// });
+
+// Load filter and load gateway ;
+get(child(ref(database), "location")).then((snapshot) => {
   const values = snapshot.val();
   const docs = Object.keys(values).map((key) => {
     return [key, values[key]];
   });
+
   let ids = [];
+  let idTemps = [];
   let names = [];
   let gateway = [];
+  let colors = [];
 
   docs.forEach((doc, index) => {
     ids.push(doc[0]);
     names.push(doc[1].name);
     gateway.push(doc[1].gateway);
+    colors.push(doc[1].color);
   });
 
-  names.forEach((name, index) => {
-    if (
-      document.querySelector(`.filter-item[name="${names[index]}"]`) !== null
-    ) {
-      console.log(names[index]);
-      document
-        .querySelector(".filter-control")
-        .removeChild(
-          document.querySelector(`.filter-item[name="${names[index]}"]`)
-        );
-    }
-  });
-
+  // Create checkbox
   checkboxElementCreated("all");
   names.forEach((name) => {
     const divFilterItem = checkboxElementCreated(name);
     document.querySelector(".filter-control").appendChild(divFilterItem);
   });
 
-  const checkboxes = document.querySelectorAll(
-    ".filter-control input[type=checkbox]"
-  );
   const checkboxAll = document.querySelector("#option-all");
+  const checkboxes = document.querySelectorAll(
+    ".filter-control input[type=checkbox]:not(#option-all)"
+  );
 
-  let checkboxItems = [];
-  checkboxes.forEach((checkbox) => {
-    if (checkbox !== checkboxAll) {
-      checkboxItems.push(checkbox);
+  checkboxAll.addEventListener("change", () => {
+    if (checkboxAll.checked === true) {
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = true;
+      });
+      containerElement.innerHTML = "";
+      ids.forEach((id, index) => {
+        containerElement.appendChild(
+          cardElementCreated(colors[index], names[index], gateway[index])
+        );
+      });
+    } else {
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+      ids.forEach((id, index) => {
+        containerElement.removeChild(
+          containerElement.querySelector(`.card[name="${names[index]}"]`)
+        );
+      });
     }
   });
 
-  checkboxItems.forEach((checkbox) => {
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked === true) {
+        ids.forEach((id, index) => {
+          if (names[index] === checkbox.id) {
+            containerElement.appendChild(
+              cardElementCreated(colors[index], names[index], gateway[index])
+            );
+          }
+        });
+      } else {
+        checkboxAll.checked = false;
+        ids.forEach((id, index) => {
+          if (names[index] === checkbox.id) {
+            containerElement.removeChild(
+              containerElement.querySelector(`.card[name="${names[index]}"]`)
+            );
+          }
+        });
+      }
+    });
+  });
+
+  // If all items checked, then check all
+  checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", (e) => {
       const checkboxItemChecked = document.querySelectorAll(
         ".filter-control input[type=checkbox]:checked"
       );
-      if (checkboxItemChecked.length === checkboxItems.length) {
+      if (checkboxItemChecked.length === checkboxes.length) {
         checkboxAll.checked = true;
       } else {
         checkboxAll.checked = false;
@@ -81,80 +237,31 @@ onValue(ref(database, "location"), (snapshot) => {
     });
   });
 
-  checkboxAll.addEventListener("change", () => {
-    checkAll(checkboxAll);
-  });
-
+  // Tick all filter when load page
+  checkboxAll.checked = true;
   checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", () => {
-      unCheckAll(checkbox);
-      console.log(checkbox.id, checkbox.checked);
-
-      if (checkbox.checked === true) {
-        if (checkbox === checkboxAll) {
-          containerElement.innerHTML = "";
-          ids.forEach((id, index) => {
-            containerElement.appendChild(
-              cardElementCreated(
-                LIST_COLOR[randomColor()],
-                names[index],
-                gateway[index]
-              )
-            );
-          });
-        } else {
-          ids.forEach((id, index) => {
-            if (names[index] === checkbox.id) {
-              containerElement.appendChild(
-                cardElementCreated(
-                  LIST_COLOR[randomColor()],
-                  names[index],
-                  gateway[index]
-                )
-              );
-            }
-          });
-        }
-      } else {
-        if (checkbox === checkboxAll) {
-          ids.forEach((id, index) => {
-            containerElement.removeChild(
-              containerElement.querySelector(`.card[name="${names[index]}"]`)
-            );
-          });
-        } else {
-          ids.forEach((id, index) => {
-            if (names[index] === checkbox.id) {
-              containerElement.removeChild(
-                containerElement.querySelector(`.card[name="${names[index]}"]`)
-              );
-            }
-          });
-        }
+    checkbox.checked = true;
+    ids.forEach((id, index) => {
+      if (names[index] === checkbox.id) {
+        containerElement.appendChild(
+          cardElementCreated(colors[index], names[index], gateway[index])
+        );
       }
     });
   });
-
-  const checkAll = (myCheckBox) => {
-    if (myCheckBox.checked === true) {
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = true;
-      });
-    } else {
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = false;
-      });
-    }
-  };
-
-  const unCheckAll = (myCheckBox) => {
-    if (myCheckBox.checked === false) {
-      checkboxAll.checked = false;
-    }
-  };
-
-  console.log(names);
 });
+
+setTimeout(() => {
+  onValue(ref(database, "location"), (snapshot) => {
+    const data = snapshot.val();
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    keys.forEach((id, index) => {
+      updateValueSensor(values[index]);
+    });
+  });
+}, 2000);
 
 const cardElementCreated = (color, name, listNode) => {
   const divCard = document.createElement("div");
@@ -187,7 +294,7 @@ const cardElementCreated = (color, name, listNode) => {
 
   divCard.setAttribute("name", name);
 
-  divStripTop.style.backgroundImage = color;
+  divStripTop.style.backgroundColor = color;
 
   divLogo.innerHTML = `
     <svg width="40" height="40" viewbox="0 0 17.5 16.2">
@@ -211,6 +318,7 @@ const cardElementCreated = (color, name, listNode) => {
 
   listNodeName.forEach((node, index) => {
     const divNode = nodeElementCreate(
+      name,
       listNodeName[index],
       listNodeSensor[index]
     );
@@ -220,9 +328,13 @@ const cardElementCreated = (color, name, listNode) => {
   return divCard;
 };
 
-const nodeElementCreate = (node, sensors) => {
+const nodeElementCreate = (nameGateway, nameNode, sensors) => {
   const sensorName = Object.keys(sensors);
   const sensorValue = Object.values(sensors);
+
+  if (maxLength < sensorName.length) {
+    maxLength = sensorName.length;
+  }
 
   const divNode = document.createElement("div");
   const divNodeName = document.createElement("div");
@@ -231,20 +343,26 @@ const nodeElementCreate = (node, sensors) => {
   divNode.classList.add("node");
   divNodeName.classList.add("node-name");
   divNodeSensors.classList.add("node-sensors");
+  divNodeSensors.style.height = `${maxLength * 50}px`;
 
   divNode.appendChild(divNodeName);
   divNode.appendChild(divNodeSensors);
 
-  divNodeName.textContent = node;
+  divNode.setAttribute("name", nameNode);
+  divNodeName.textContent = nameNode;
   sensorName.forEach((sensor, index) => {
-    const divSensor = sensorElementCreate(sensor, sensorValue[index]);
+    const divSensor = sensorElementCreate(
+      nameGateway,
+      sensor,
+      sensorValue[index]
+    );
     divNodeSensors.appendChild(divSensor);
   });
 
   return divNode;
 };
 
-const sensorElementCreate = (sensorName, sensorValue) => {
+const sensorElementCreate = (nameGateway, sensorName, sensorValue) => {
   const divSensor = document.createElement("div");
   const divSensorName = document.createElement("div");
   const divSensorValue = document.createElement("div");
@@ -253,8 +371,23 @@ const sensorElementCreate = (sensorName, sensorValue) => {
   divSensorName.classList.add("sensor-name");
   divSensorValue.classList.add("sensor-value");
 
+  divSensor.setAttribute("name", sensorName);
   divSensor.appendChild(divSensorName);
   divSensor.appendChild(divSensorValue);
+
+  const labelGateway = document.querySelector(
+    `.filter label[for="${nameGateway}"]`
+  );
+  onValue(ref(database, "settings/sensor/" + sensorName), (snapshot) => {
+    const data = snapshot.val();
+    if (sensorValue < data.minT) {
+      divSensorValue.style.color = "orange";
+      labelGateway.style.color = "orange";
+    } else if (sensorValue > data.maxT) {
+      divSensorValue.style.color = "red";
+      labelGateway.style.color = "red";
+    }
+  });
 
   divSensorName.textContent = sensorName.toUpperCase();
   divSensorValue.textContent = sensorValue;
@@ -293,4 +426,30 @@ const checkboxElementCreated = (name) => {
   divFilterItem.appendChild(labelTitle);
 
   return divFilterItem;
+};
+
+// Update value sensor
+const updateValueSensor = (data) => {
+  const nameLocation = data.name;
+  const gateway = data.gateway;
+  const nodes = Object.keys(gateway).map((gate) => {
+    return [gate, gateway[gate]];
+  });
+
+  nodes.forEach((node) => {
+    const nameNode = node[0];
+    const sensors = node[1];
+
+    const nameSensorList = Object.keys(sensors);
+    const valueSensorList = Object.values(sensors);
+
+    nameSensorList.forEach((sensor, index) => {
+      const sensorValue = valueSensorList[index];
+      const sensorName = nameSensorList[index];
+      const sensorElement = document.querySelector(
+        `.card[name="${nameLocation}"] .node[name="${nameNode}"] .sensor[name="${sensorName}"] .sensor-value`
+      );
+      if (sensorElement) sensorElement.textContent = sensorValue;
+    });
+  });
 };

@@ -14,22 +14,6 @@
 </head>
 
 <body>
-    <div class="loader-container">
-        <div class="lds-spinner">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
     <nav>
         <input type="checkbox" id="check">
         <label for="check" class="checkbtn">
@@ -49,61 +33,49 @@
         <div class="container">
             <div class="settings-container">
                 <div class="sensor-container">
-                    <div class="sensor-selector">
-                        <div class="select">
-                            <select>
-                                <option value="default">Select Sensor</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="sensor-control">
-                        <div class="filter level-filter level-req">
-                            <div id="rangeSlider" class="range-slider">
-                                <label>Levels:</label>
-
-                                <div class="number-group">
-                                    <input class="number-input" type="number" value="10" min="0" max="50" /> to
-                                    <input class="number-input" type="number" value="50" min="0" max="50" />
+                    <div class="table-container">
+                        <h2>Sensors <small>Settings threshold</small></h2>
+                        <ul class="responsive-table">
+                        </ul>
+                        <div class="table-button">
+                            <button class="btn-save" id="btn-save-sensor">SAVE
+                                <div class="loader-container sensor-loader">
+                                    <div class="lds-dual-ring"></div>
                                 </div>
-
-                                <div class="range-group">
-                                    <input class="range-input" value="10" min="1" max="50" step="1" type="range" />
-                                    <input class="range-input" value="50" min="1" max="50" step="1" type="range" />
-                                </div>
-                            </div>
-
+                            </button>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="color-container">
                     <div class="color-selector">
-                        <div class="select">
-                            <select>
-                                <option>Select Range</option>
-                                <option value="min">Min</option>
-                                <option value="max">Max</option>
-                            </select>
-                        </div>
-                        <div class="color-content">
-                            <div class="color-circle"></div>
-                            <div class="color-code"></div>
+                        <div class="select-menu">
+                            <div class="select-btn">
+                                <span class="sBtn-text">Select color location</span>
+                                <span class="material-symbols-rounded">
+                                    expand_more
+                                </span>
+                            </div>
+
+                            <ul class="options">
+
+                            </ul>
                         </div>
                     </div>
                     <div class="color-picker"></div>
+                    <div class="btn-save" id="btn-save-color">SAVE
+                        <div class="loader-container color-loader">
+                            <div class="lds-dual-ring"></div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="btn-save">
-                    <button type="button" class="btn">SAVE</button>
-                </div>
+
+
+
             </div>
 
         </div>
-
-
-    </div>
-
     </div>
 
 

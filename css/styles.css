@@ -24,9 +24,10 @@ body {
     /* background-color: #808080; */
     /* background-image: linear-gradient(to right, #505050, #808080); */
     width: 100%;
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 @media screen and (min-width: 400px) {
@@ -74,7 +75,7 @@ a:hover {
 }
 .checkbtn {
     font-size: 30px;
-    color: white;
+    color: #202020;
     float: right;
     line-height: 80px;
     margin-right: 40px;
@@ -97,12 +98,12 @@ a:hover {
     .checkbtn {
         display: block;
     }
-    ul {
+    nav ul {
         z-index: 1000;
         position: fixed;
         width: 100%;
         height: 100vh;
-        background: #666;
+        background: #fff;
         top: 80px;
         left: -100%;
         text-align: center;
@@ -115,12 +116,12 @@ a:hover {
     }
     nav ul li a {
         font-size: 20px;
-        color: #505050;
+        color: #808080;
     }
     a:hover,
     a.active {
         background: none;
-        color: #fff;
+        color: #202020;
     }
     #check:checked ~ ul {
         left: 0;
@@ -133,12 +134,12 @@ a:hover {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: start;
 }
 
 .filter {
     width: 300px;
-    height: 100vh;
+    height: 100%;
     position: relative;
     padding: 20px;
     display: flex;
@@ -238,18 +239,25 @@ a:hover {
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: start;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 50px;
 }
 
+@media (max-width: 1450px) {
+    .container {
+        justify-content: center;
+    }
+}
+
 .card {
     width: 550px;
     height: auto;
-    text-align: left;
-    margin-bottom: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .front {
@@ -373,7 +381,7 @@ a:hover {
 }
 
 .sensor-name {
-    font-size: 12px;
+    font-size: 14px;
     /* font-family: "cc font", monospace; */
     color: rgba(255, 255, 255, 0.8);
 }
@@ -381,98 +389,6 @@ a:hover {
 .sensor-value {
     font-size: 24px;
     font-family: "cc font", monospace;
-}
-
-/* loading */
-.loader-container {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-    position: 0.2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    z-index: 100;
-}
-
-.lds-spinner {
-    color: official;
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-}
-.lds-spinner div {
-    transform-origin: 40px 40px;
-    animation: lds-spinner 1.2s linear infinite;
-}
-.lds-spinner div:after {
-    content: " ";
-    display: block;
-    position: absolute;
-    top: 3px;
-    left: 37px;
-    width: 6px;
-    height: 18px;
-    border-radius: 20%;
-    background: #202020;
-}
-.lds-spinner div:nth-child(1) {
-    transform: rotate(0deg);
-    animation-delay: -1.1s;
-}
-.lds-spinner div:nth-child(2) {
-    transform: rotate(30deg);
-    animation-delay: -1s;
-}
-.lds-spinner div:nth-child(3) {
-    transform: rotate(60deg);
-    animation-delay: -0.9s;
-}
-.lds-spinner div:nth-child(4) {
-    transform: rotate(90deg);
-    animation-delay: -0.8s;
-}
-.lds-spinner div:nth-child(5) {
-    transform: rotate(120deg);
-    animation-delay: -0.7s;
-}
-.lds-spinner div:nth-child(6) {
-    transform: rotate(150deg);
-    animation-delay: -0.6s;
-}
-.lds-spinner div:nth-child(7) {
-    transform: rotate(180deg);
-    animation-delay: -0.5s;
-}
-.lds-spinner div:nth-child(8) {
-    transform: rotate(210deg);
-    animation-delay: -0.4s;
-}
-.lds-spinner div:nth-child(9) {
-    transform: rotate(240deg);
-    animation-delay: -0.3s;
-}
-.lds-spinner div:nth-child(10) {
-    transform: rotate(270deg);
-    animation-delay: -0.2s;
-}
-.lds-spinner div:nth-child(11) {
-    transform: rotate(300deg);
-    animation-delay: -0.1s;
-}
-.lds-spinner div:nth-child(12) {
-    transform: rotate(330deg);
-    animation-delay: 0s;
-}
-@keyframes lds-spinner {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
 }
 
 @font-face {
