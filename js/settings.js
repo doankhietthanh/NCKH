@@ -10,11 +10,26 @@ const loadingSensor = document.querySelector(".loader-container.sensor-loader");
 const loadingColor = document.querySelector(".loader-container.color-loader");
 
 const tableSensor = document.querySelector(".responsive-table");
+const optionsSelect = document.querySelector(".color-selector .options");
+
 const btnSaveSensor = document.querySelector("#btn-save-sensor");
 const btnSaveColor = document.querySelector("#btn-save-color");
 
-let nameSensors = [];
+const optionMenu = document.querySelector(".select-menu"),
+  selectBtn = optionMenu.querySelector(".select-btn"),
+  sBtn_text = optionMenu.querySelector(".sBtn-text");
+
+let locationColorSelect = {
+  id: "",
+  name: "",
+  color: "",
+};
+
 let thresholdList = [];
+
+selectBtn.addEventListener("click", () =>
+  optionMenu.classList.toggle("active")
+);
 
 onValue(ref(database, "settings/sensor"), (snapshot) => {
   const data = snapshot.val();
@@ -52,49 +67,42 @@ onValue(ref(database, "settings/sensor"), (snapshot) => {
 
 onValue(ref(database, "location"), (snapshot) => {
   const data = snapshot.val();
-  const id = Object.keys(data);
+  const ids = Object.keys(data);
   const values = Object.values(data);
 
-  values.forEach((value) => {
-    document
-      .querySelector(".color-selector .options")
-      .appendChild(optionColorElementCreated(value));
+  optionsSelect.innerHTML = "";
+  values.forEach((value, index) => {
+    optionsSelect.appendChild(optionColorElementCreated(value));
   });
 
-  const optionMenu = document.querySelector(".select-menu"),
-    selectBtn = optionMenu.querySelector(".select-btn"),
-    options = optionMenu.querySelectorAll(".option"),
-    sBtn_text = optionMenu.querySelector(".sBtn-text");
-
-  selectBtn.addEventListener("click", () =>
-    optionMenu.classList.toggle("active")
-  );
-
-  options.forEach((option) => {
+  optionMenu.querySelectorAll(".option").forEach((option) => {
     option.addEventListener("click", () => {
       let selectedOption = option.querySelector(".option-text").innerText;
       sBtn_text.innerText = selectedOption;
-
       optionMenu.classList.remove("active");
-    });
-  });
+      locationColorSelect.name = selectedOption;
 
-  btnSaveColor.addEventListener("click", (e) => {
-    values.forEach((value, index) => {
-      if (value.name === sBtn_text.innerText) {
-        if (color.length === 0) {
-          alert("Please select a color");
-        } else {
-          set(ref(database, "location/" + id[index] + "/color"), color);
-          loadingColor.style.display = "flex";
-          setTimeout(() => {
-            loadingColor.style.display = "none";
-            window.location.reload();
-          }, 2000);
+      values.forEach((value, index) => {
+        if (value.name === sBtn_text.innerText) {
+          locationColorSelect.id = ids[index];
         }
-      }
+      });
     });
   });
+});
+
+btnSaveColor.addEventListener("click", (e) => {
+  if (color.length === 0) {
+    alert("Please select a color");
+    return;
+  } else {
+    set(ref(database, `location/${locationColorSelect.id}/color`), color);
+    loadingColor.style.display = "flex";
+    setTimeout(() => {
+      loadingColor.style.display = "none";
+      // window.location.reload();
+    }, 2000);
+  }
 });
 
 btnSaveSensor.addEventListener("click", () => {
