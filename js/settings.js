@@ -67,12 +67,12 @@ onValue(ref(database, "settings/sensor"), (snapshot) => {
 
 onValue(ref(database, "location"), (snapshot) => {
   const data = snapshot.val();
-  const ids = Object.keys(data);
+  const nameLocationList = Object.keys(data);
   const values = Object.values(data);
 
   optionsSelect.innerHTML = "";
-  values.forEach((value, index) => {
-    optionsSelect.appendChild(optionColorElementCreated(value));
+  nameLocationList.forEach((name, index) => {
+    optionsSelect.appendChild(optionColorElementCreated(name));
   });
 
   optionMenu.querySelectorAll(".option").forEach((option) => {
@@ -96,7 +96,7 @@ btnSaveColor.addEventListener("click", (e) => {
     alert("Please select a color");
     return;
   } else {
-    set(ref(database, `location/${locationColorSelect.id}/color`), color);
+    set(ref(database, `settings/color/${locationColorSelect.id}`), color);
     loadingColor.style.display = "flex";
     setTimeout(() => {
       loadingColor.style.display = "none";
@@ -246,7 +246,7 @@ const optionColorElementCreated = (data) => {
 
   const spanOptionText = document.createElement("span");
   spanOptionText.classList.add("option-text");
-  spanOptionText.textContent = data.name;
+  spanOptionText.textContent = data;
 
   liOption.appendChild(spanColorCircle);
   liOption.appendChild(spanOptionText);

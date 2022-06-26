@@ -36,24 +36,25 @@
                 <h2>HISTORY</h2>
                 <ul class="responsive-table">
                     <li class="table-header">
-                        <div class="col col-1">ID</div>
+                        <div class="col col-1">Time</div>
                         <div class="col col-2">Location</div>
                         <div class="col col-3">Node</div>
-                        <div class="col col-4">Sensor</div>
-                        <div class="col col-5">Value</div>
-                        <div class="col col-6">Unit</div>
+                        <div class="col col-4">
+                            <div class="row">Sensor</div>
+                            <div class="row">
+                                <div class="col">CO</div>
+                                <div class="col">HUMI</div>
+                                <div class="col">NOISE</div>
+                                <div class="col">SHINE</div>
+                                <div class="col">TEMP</div>
+                                <div class="col">UV</div>
+                            </div>
+
+                        </div>
                     </li>
                 </ul>
                 <ul class="responsive-table table-main">
 
-                    <li class="table-row">
-                        <div class="col col-1" data-label="id">1</div>
-                        <div class="col col-2" data-label="location">HoChiMinh</div>
-                        <div class="col col-3" data-label="node">Node_01</div>
-                        <div class="col col-4" data-label="sensor">Humidity</div>
-                        <div class="col col-5" data-label="value">80</div>
-                        <div class="col col-6" data-label="unit">%</div>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -64,8 +65,10 @@
 
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"
+    integrity="sha512-nYuHvSAhY5lFZ4ixSViOwsEKFvlxHMU2NHts1ILuJgOS6ptUmAGt/0i5czIgMOahKZ6JN84YFDA+mCdky7dD8A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="module" src="./js/firebase.js"></script>
-
 <script type="module" src="./js/history.js"></script>
 
 

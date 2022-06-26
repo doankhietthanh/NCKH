@@ -13,25 +13,12 @@ let maxLength = 0;
 // Load filter and load gateway ;
 get(child(ref(database), "location")).then((snapshot) => {
   const values = snapshot.val();
-  const docs = Object.keys(values).map((key) => {
-    return [key, values[key]];
-  });
-
-  let ids = [];
-  let names = [];
-  let gateway = [];
-  let colors = [];
-
-  docs.forEach((doc, index) => {
-    ids.push(doc[0]);
-    names.push(doc[1].name);
-    gateway.push(doc[1].gateway);
-    colors.push(doc[1].color);
-  });
+  const nameLocationList = Object.keys(values);
+  const nodeList = Object.values(values);
 
   // Create checkbox
   checkboxElementCreated("all");
-  names.forEach((name) => {
+  nameLocationList.forEach((name) => {
     const divFilterItem = checkboxElementCreated(name);
     document.querySelector(".filter-control").appendChild(divFilterItem);
   });
@@ -47,18 +34,18 @@ get(child(ref(database), "location")).then((snapshot) => {
         checkbox.checked = true;
       });
       containerElement.innerHTML = "";
-      ids.forEach((id, index) => {
+      nameLocationList.forEach((name, index) => {
         containerElement.appendChild(
-          cardElementCreated(colors[index], names[index], gateway[index])
+          cardElementCreated("#333", name, nodeList[index])
         );
       });
     } else {
       checkboxes.forEach((checkbox) => {
         checkbox.checked = false;
       });
-      ids.forEach((id, index) => {
+      nameLocationList.forEach((name, index) => {
         containerElement.removeChild(
-          containerElement.querySelector(`.card[name="${names[index]}"]`)
+          containerElement.querySelector(`.card[name="${name}"]`)
         );
       });
     }
@@ -67,19 +54,19 @@ get(child(ref(database), "location")).then((snapshot) => {
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
       if (checkbox.checked === true) {
-        ids.forEach((id, index) => {
-          if (names[index] === checkbox.id) {
+        nameLocationList.forEach((name, index) => {
+          if (name === checkbox.id) {
             containerElement.appendChild(
-              cardElementCreated(colors[index], names[index], gateway[index])
+              cardElementCreated("#333", name, nodeList[index])
             );
           }
         });
       } else {
         checkboxAll.checked = false;
-        ids.forEach((id, index) => {
-          if (names[index] === checkbox.id) {
+        nameLocationList.forEach((name, index) => {
+          if (name === checkbox.id) {
             containerElement.removeChild(
-              containerElement.querySelector(`.card[name="${names[index]}"]`)
+              containerElement.querySelector(`.card[name="${name}"]`)
             );
           }
         });
@@ -105,10 +92,10 @@ get(child(ref(database), "location")).then((snapshot) => {
   checkboxAll.checked = true;
   checkboxes.forEach((checkbox) => {
     checkbox.checked = true;
-    ids.forEach((id, index) => {
-      if (names[index] === checkbox.id) {
+    nameLocationList.forEach((name, index) => {
+      if (name === checkbox.id) {
         containerElement.appendChild(
-          cardElementCreated(colors[index], names[index], gateway[index])
+          cardElementCreated("#333", name, nodeList[index])
         );
       }
     });
@@ -117,11 +104,11 @@ get(child(ref(database), "location")).then((snapshot) => {
 
 onValue(ref(database, "location"), (snapshot) => {
   const data = snapshot.val();
-  const keys = Object.keys(data);
-  const values = Object.values(data);
+  const nameLocationList = Object.keys(data);
+  const nodeList = Object.values(data);
 
-  keys.forEach((id, index) => {
-    updateValueSensor(values[index]);
+  nameLocationList.forEach((name, index) => {
+    updateValueSensor(name, nodeList[index]);
   });
 });
 
@@ -291,11 +278,9 @@ const checkboxElementCreated = (name) => {
 };
 
 // Update value sensor
-const updateValueSensor = (data) => {
-  const nameLocation = data.name;
-  const gateway = data.gateway;
-  const nodes = Object.keys(gateway).map((gate) => {
-    return [gate, gateway[gate]];
+const updateValueSensor = (nameLocation, nodeList) => {
+  const nodes = Object.keys(nodeList).map((node) => {
+    return [node, nodeList[node]];
   });
 
   nodes.forEach((node) => {
@@ -315,8 +300,6 @@ const updateValueSensor = (data) => {
         }
       });
     });
-
-    console.log(valueTempList);
 
     nameSensorList.forEach((sensor, index) => {
       const sensorValue = valueSensorList[index];
