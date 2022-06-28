@@ -108,6 +108,7 @@ onValue(ref(database, "location"), (snapshot) => {
   const nodeList = Object.values(data);
 
   nameLocationList.forEach((name, index) => {
+    console.log(name, nodeList[index]);
     updateValueSensor(name, nodeList[index]);
   });
 });
@@ -169,7 +170,7 @@ const cardElementCreated = (color, name, listNode) => {
     const divNode = nodeElementCreate(
       name,
       listNodeName[index],
-      listNodeSensor[index]
+      listNodeSensor[index].sensors
     );
     divGatewayContainer.appendChild(divNode);
   });
@@ -285,7 +286,7 @@ const updateValueSensor = (nameLocation, nodeList) => {
 
   nodes.forEach((node) => {
     const nameNode = node[0];
-    const sensors = node[1];
+    const sensors = node[1].sensors;
 
     const nameSensorList = Object.keys(sensors);
     const valueSensorList = Object.values(sensors);

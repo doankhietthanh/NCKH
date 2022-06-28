@@ -7,6 +7,7 @@ import {
 import { database } from "./firebase.js";
 
 const endPoint = "http://127.0.0.1:8080";
+const socket = io(endPoint);
 
 const LIST_SENSOR = ["co", "humi", "noise", "shine", "temp", "uv"];
 
@@ -92,41 +93,31 @@ const getDayAndTime = (time) => {
 
   return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
 };
-console.log(getDayAndTime(1656252858634));
 
 const tableMain = document.querySelector(".table-main");
+socket.on("history", (data) => {
+  console.log(data);
+  const timestamp = Object.keys(data);
+  const locationList = Object.values(data);
 
-await fetch(endPoint + "/history", {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-  },
-})
-  .then((response) => response.json())
-  .then((data) => {
-    const timestamp = Object.keys(data);
-    const locationList = Object.values(data);
+  tableMain.innerHTML = "";
+  timestamp.forEach((time, index) => {
+    const location = Object.keys(locationList[index]);
+    const nodeList = Object.values(locationList[index]);
 
-    timestamp.forEach((time, index) => {
-      const location = Object.keys(locationList[index]);
-      const nodeList = Object.values(locationList[index]);
+    nodeList.forEach((node, index) => {
+      const nodeName = Object.keys(node);
+      const sensorList = Object.values(node);
 
-      nodeList.forEach((node, index) => {
-        const nodeName = Object.keys(node);
-        const sensorList = Object.values(node);
-
-        tableMain.insertAdjacentElement(
-          "afterbegin",
-          TableRowElementCreated(
-            getDayAndTime(Number(time)),
-            location[index],
-            nodeName,
-            sensorList
-          )
-        );
-      });
+      tableMain.insertAdjacentElement(
+        "afterbegin",
+        TableRowElementCreated(
+          getDayAndTime(Number(time)),
+          location[index],
+          nodeName,
+          sensorList
+        )
+      );
     });
-  })
-  .catch((error) => {
-    console.error("Error:", error);
   });
+});
