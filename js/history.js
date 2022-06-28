@@ -1,11 +1,3 @@
-import {
-  onValue,
-  ref,
-  set,
-} from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
-
-import { database } from "./firebase.js";
-
 const endPoint = "http://127.0.0.1:8080";
 const socket = io(endPoint);
 
@@ -94,9 +86,7 @@ const getDayAndTime = (time) => {
   return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
 };
 
-const tableMain = document.querySelector(".table-main");
-socket.on("history", (data) => {
-  console.log(data);
+const renderHistory = (data) => {
   const timestamp = Object.keys(data);
   const locationList = Object.values(data);
 
@@ -120,4 +110,15 @@ socket.on("history", (data) => {
       );
     });
   });
+};
+
+const tableMain = document.querySelector(".table-main");
+fetch(endPoint + "/history")
+  .then((response) => response.json())
+  .then((data) => {
+    renderHistory(data);
+  });
+
+socket.on("history", (data) => {
+  renderHistory(data);
 });

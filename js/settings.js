@@ -81,22 +81,17 @@ onValue(ref(database, "location"), (snapshot) => {
       sBtn_text.innerText = selectedOption;
       optionMenu.classList.remove("active");
       locationColorSelect.name = selectedOption;
-
-      values.forEach((value, index) => {
-        if (value.name === sBtn_text.innerText) {
-          locationColorSelect.id = ids[index];
-        }
-      });
     });
   });
 });
 
 btnSaveColor.addEventListener("click", (e) => {
+  console.log(color);
   if (color.length === 0) {
     alert("Please select a color");
     return;
   } else {
-    set(ref(database, `settings/color/${locationColorSelect.id}`), color);
+    set(ref(database, `settings/color/${locationColorSelect.name}`), color);
     loadingColor.style.display = "flex";
     setTimeout(() => {
       loadingColor.style.display = "none";

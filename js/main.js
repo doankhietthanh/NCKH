@@ -1,17 +1,20 @@
-import { app, database } from "./firebase.js";
 import {
-  getDatabase,
-  get,
-  child,
   onValue,
   ref,
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
+import { database } from "./firebase.js";
 
 const containerElement = document.querySelector(".container");
-let maxLength = 0;
+let maxLength = localStorage.getItem("maxLength");
+
+onValue(ref(database, "settings/color"), (snapshot) => {
+  const data = snapshot.val();
+  const nameLocation = Object.keys(data);
+  console.log(nameLocation);
+});
 
 // Load filter and load gateway ;
-get(child(ref(database), "location")).then((snapshot) => {
+onValue(ref(database, "location"), (snapshot) => {
   const values = snapshot.val();
   const nameLocationList = Object.keys(values);
   const nodeList = Object.values(values);
@@ -35,8 +38,9 @@ get(child(ref(database), "location")).then((snapshot) => {
       });
       containerElement.innerHTML = "";
       nameLocationList.forEach((name, index) => {
+        console.log(nodeList[index]);
         containerElement.appendChild(
-          cardElementCreated("#333", name, nodeList[index])
+          cardElementCreated(getColorLocation(name), name, nodeList[index])
         );
       });
     } else {
@@ -57,7 +61,7 @@ get(child(ref(database), "location")).then((snapshot) => {
         nameLocationList.forEach((name, index) => {
           if (name === checkbox.id) {
             containerElement.appendChild(
-              cardElementCreated("#333", name, nodeList[index])
+              cardElementCreated(getColorLocation(name), name, nodeList[index])
             );
           }
         });
@@ -95,7 +99,7 @@ get(child(ref(database), "location")).then((snapshot) => {
     nameLocationList.forEach((name, index) => {
       if (name === checkbox.id) {
         containerElement.appendChild(
-          cardElementCreated("#333", name, nodeList[index])
+          cardElementCreated(getColorLocation(name), name, nodeList[index])
         );
       }
     });
@@ -184,6 +188,7 @@ const nodeElementCreate = (nameGateway, nameNode, sensors) => {
 
   if (maxLength <= sensorName.length) {
     maxLength = sensorName.length;
+    localStorage.setItem("maxLength", maxLength);
   }
 
   const divNode = document.createElement("div");
@@ -311,4 +316,12 @@ const updateValueSensor = (nameLocation, nodeList) => {
       if (sensorElement) sensorElement.textContent = sensorValue;
     });
   });
+};
+
+const getColorLocation = (nameLocation) => {
+  let color = "";
+  onValue(ref(database, "settings/color/" + nameLocation), (snapshot) => {
+    color = snapshot.val();
+  });
+  return color;
 };

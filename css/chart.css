@@ -1,11 +1,22 @@
 .container-chart {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2em;
 }
 
 .chart-selector {
     width: 100%;
     height: 100%;
+    flex-wrap: wrap;
 
     display: flex;
     flex-direction: row;
@@ -93,5 +104,67 @@
     to {
         transform: translate3d(0, 0, 0);
         opacity: 1;
+    }
+}
+
+/*  */
+.time-selector {
+    height: 100%;
+}
+.time-container {
+    height: 100%;
+}
+.inp-wrapper {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.date-wrapper {
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+    border-radius: 8px;
+    padding: 1em;
+    gap: 10px;
+}
+.time-selector label {
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+input[type="date"] {
+    font-size: 16px;
+    color: #000;
+    border: none;
+    outline: none;
+    border-radius: 0.2em;
+}
+::-webkit-calendar-picker-indicator {
+    background-color: #fbfbfb;
+    padding: 0.2em;
+    cursor: pointer;
+    border-radius: 0.1em;
+}
+
+@media screen and (max-width: 600px) {
+    .chart-selector {
+        flex-direction: column;
+    }
+    .time-container {
+        flex-direction: row;
+    }
+    .inp-wrapper {
+        flex-direction: column;
+        gap: 40px;
+    }
+    .date-wrapper {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
     }
 }

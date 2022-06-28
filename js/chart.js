@@ -52,10 +52,21 @@ const getColorSensor = (nameSensor) => {
   return color;
 };
 
-const getRangeTime = (timeList, time1, time2) => {
-  return timeList.filter((time) => {
-    return time >= time1 && time <= time2;
+const getRangeValueWithTime = (timeList, valueList, firstTime, lastTime) => {
+  const timeRange = timeList.filter((time) => {
+    if (firstTime === lastTime) {
+      return time >= firstTime;
+    } else {
+      return time >= firstTime && time <= lastTime;
+    }
   });
+
+  return {
+    timeRange: timeRange,
+    valueRange: timeRange.map((time) => {
+      return valueList[timeList.indexOf(time)];
+    }),
+  };
 };
 
 const convertTimestampToDate = (timestamp) => {
@@ -83,7 +94,6 @@ const chartElementCreated = (
     const values = valueSensors.map((value, i) => {
       return value[index];
     });
-    // console.log(values);
 
     if (event === "all") {
       const dataset = {
@@ -269,7 +279,7 @@ get(child(ref(database), "location")).then((snapshot) => {
                     chartContainer.innerHTML = "";
                     chartContainer.appendChild(
                       chartElementCreated(
-                        "pick",
+                        "sensor",
                         chartSelect.location,
                         [chartSelect.node],
                         timeList,
@@ -277,6 +287,35 @@ get(child(ref(database), "location")).then((snapshot) => {
                         valueSensorList
                       )
                     );
+
+                    document
+                      .querySelector(".inp-wrapper")
+                      .addEventListener("change", (e) => {
+                        let date1 = new Date(
+                          document.getElementById("date-1").value
+                        ).getTime();
+                        let date2 = new Date(
+                          document.getElementById("date-2").value
+                        ).getTime();
+
+                        const dataRange = getRangeValueWithTime(
+                          timeList,
+                          valueSensorList,
+                          date1,
+                          date2
+                        );
+                        chartContainer.innerHTML = "";
+                        chartContainer.appendChild(
+                          chartElementCreated(
+                            "sensor",
+                            chartSelect.location,
+                            [chartSelect.node],
+                            dataRange.timeRange,
+                            [chartSelect.sensor],
+                            dataRange.valueRange
+                          )
+                        );
+                      });
                   });
               });
             });
