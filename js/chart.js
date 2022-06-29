@@ -52,6 +52,21 @@ const getColorSensor = (nameSensor) => {
   return color;
 };
 
+const convertDateToTimestamp = (date, hms) => {
+  const dateTime = date.split("-");
+  const time = hms.split(":");
+
+  const dateObj = new Date(
+    +dateTime[0],
+    +dateTime[1] - 1,
+    +dateTime[2],
+    +time[0],
+    +time[1]
+  );
+
+  return dateObj.getTime();
+};
+
 const getRangeValueWithTime = (timeList, valueList, firstTime, lastTime) => {
   const timeRange = timeList.filter((time) => {
     if (firstTime === lastTime) {
@@ -124,13 +139,6 @@ const chartElementCreated = (
     },
     options: {
       responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: nameNode,
-        },
-      },
-      scales: {},
     },
   };
 
@@ -291,12 +299,15 @@ get(child(ref(database), "location")).then((snapshot) => {
                     document
                       .querySelector(".inp-wrapper")
                       .addEventListener("change", (e) => {
-                        let date1 = new Date(
-                          document.getElementById("date-1").value
-                        ).getTime();
-                        let date2 = new Date(
-                          document.getElementById("date-2").value
-                        ).getTime();
+                        let date1 = convertDateToTimestamp(
+                          document.getElementById("date-1-date").value,
+                          document.getElementById("date-1-time").value
+                        );
+
+                        let date2 = convertDateToTimestamp(
+                          document.getElementById("date-2-date").value,
+                          document.getElementById("date-2-time").value
+                        );
 
                         const dataRange = getRangeValueWithTime(
                           timeList,
@@ -304,6 +315,9 @@ get(child(ref(database), "location")).then((snapshot) => {
                           date1,
                           date2
                         );
+
+                        console.log(dataRange);
+
                         chartContainer.innerHTML = "";
                         chartContainer.appendChild(
                           chartElementCreated(

@@ -1,6 +1,8 @@
 import {
   onValue,
   ref,
+  get,
+  child,
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
 import { database } from "./firebase.js";
 
@@ -10,11 +12,10 @@ let maxLength = localStorage.getItem("maxLength");
 onValue(ref(database, "settings/color"), (snapshot) => {
   const data = snapshot.val();
   const nameLocation = Object.keys(data);
-  console.log(nameLocation);
 });
 
 // Load filter and load gateway ;
-onValue(ref(database, "location"), (snapshot) => {
+get(child(ref(database), "location")).then((snapshot) => {
   const values = snapshot.val();
   const nameLocationList = Object.keys(values);
   const nodeList = Object.values(values);
@@ -112,7 +113,6 @@ onValue(ref(database, "location"), (snapshot) => {
   const nodeList = Object.values(data);
 
   nameLocationList.forEach((name, index) => {
-    console.log(name, nodeList[index]);
     updateValueSensor(name, nodeList[index]);
   });
 });

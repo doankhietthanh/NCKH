@@ -277,11 +277,13 @@ a:hover {
     width: inherit;
     height: inherit;
     border-radius: 15px;
-    color: #fff;
+    color: #202020;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 1px 10px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.3);
     backface-visibility: hidden;
-    background-image: linear-gradient(to right, #111, #555);
+    /* background-image: linear-gradient(to right, #111, #555); */
+    background-image: linear-gradient(to right, rgb(220, 220, 220), rgb(228, 228, 228));
+
     overflow: hidden;
 }
 
@@ -300,8 +302,7 @@ a:hover {
 .strip-bottom,
 .strip-top {
     height: inherit;
-    /* background-image: linear-gradient(to bottom, #ff6767, #ff4545); */
-    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.5);
 }
 
 .strip-top {
@@ -396,7 +397,7 @@ a:hover {
 .sensor-name {
     font-size: 14px;
     /* font-family: "cc font", monospace; */
-    color: rgba(255, 255, 255, 0.8);
+    color: #000;
 }
 
 .sensor-value {
