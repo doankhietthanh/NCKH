@@ -39,9 +39,9 @@
     box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
 }
 
-.responsive-table .table-row:nth-child(1) {
+/* .responsive-table .table-row:nth-child(1) {
     animation: fadeInUp 1s;
-}
+} */
 
 .responsive-table .col {
     display: flex;

@@ -9,6 +9,11 @@ import { database } from "./firebase.js";
 const containerElement = document.querySelector(".container");
 let maxLength = localStorage.getItem("maxLength");
 
+let docsValueSensorsThreshold = [];
+onValue(ref(database, "settings/sensor"), (snapshot) => {
+  docsValueSensorsThreshold = snapshot.val();
+});
+
 onValue(ref(database, "settings/color"), (snapshot) => {
   const data = snapshot.val();
   const nameLocation = Object.keys(data);
@@ -39,7 +44,6 @@ get(child(ref(database), "location")).then((snapshot) => {
       });
       containerElement.innerHTML = "";
       nameLocationList.forEach((name, index) => {
-        console.log(nodeList[index]);
         containerElement.appendChild(
           cardElementCreated(getColorLocation(name), name, nodeList[index])
         );
@@ -233,16 +237,6 @@ const sensorElementCreate = (nameGateway, sensorName, sensorValue) => {
   const labelGateway = document.querySelector(
     `.filter label[for="${nameGateway}"]`
   );
-  onValue(ref(database, "settings/sensor/" + sensorName), (snapshot) => {
-    const data = snapshot.val();
-    if (parseInt(sensorValue) < parseInt(data.minT)) {
-      divSensorValue.style.color = "orange";
-      labelGateway.style.color = "orange";
-    } else if (parseInt(sensorValue) > parseInt(data.maxT)) {
-      divSensorValue.style.color = "red";
-      labelGateway.style.color = "red";
-    }
-  });
 
   divSensorName.textContent = sensorName.toUpperCase();
   divSensorValue.textContent = sensorValue;
@@ -289,6 +283,11 @@ const updateValueSensor = (nameLocation, nodeList) => {
     return [node, nodeList[node]];
   });
 
+  let totalSensorOverloadThreshold = 0;
+  const nameLocationElement = document.querySelector(
+    `label[for="${nameLocation}"]`
+  );
+
   nodes.forEach((node) => {
     const nameNode = node[0];
     const sensors = node[1].sensors;
@@ -310,12 +309,42 @@ const updateValueSensor = (nameLocation, nodeList) => {
     nameSensorList.forEach((sensor, index) => {
       const sensorValue = valueSensorList[index];
       const sensorName = nameSensorList[index];
-      const sensorElement = document.querySelector(
+
+      const sensorValueElement = document.querySelector(
         `.card[name="${nameLocation}"] .node[name="${nameNode}"] .sensor[name="${sensorName}"] .sensor-value`
       );
-      if (sensorElement) sensorElement.textContent = sensorValue;
+
+      const sensorNameElement = document.querySelector(
+        `.card[name="${nameLocation}"] .node[name="${nameNode}"] .sensor[name="${sensorName}"] .sensor-name`
+      );
+      if (sensorValueElement && sensorNameElement && nameLocationElement) {
+        sensorValueElement.textContent = sensorValue;
+        if (
+          parseInt(sensorValue) <
+          parseInt(docsValueSensorsThreshold[sensorName].minT)
+        ) {
+          sensorValueElement.style.color = "orange";
+          sensorNameElement.style.color = "orange";
+          nameLocationElement.style.color = "orange";
+          totalSensorOverloadThreshold++;
+        } else if (
+          parseInt(sensorValue) >
+          parseInt(docsValueSensorsThreshold[sensorName].maxT)
+        ) {
+          sensorValueElement.style.color = "red";
+          sensorNameElement.style.color = "red";
+          nameLocationElement.style.color = "red";
+          totalSensorOverloadThreshold++;
+        } else {
+          sensorValueElement.style.color = "black";
+          sensorNameElement.style.color = "black";
+        }
+      }
     });
   });
+  if (totalSensorOverloadThreshold === 0) {
+    if (nameLocationElement) nameLocationElement.style.color = "black";
+  }
 };
 
 const getColorLocation = (nameLocation) => {
