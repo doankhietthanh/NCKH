@@ -5,7 +5,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
 import { database } from "./firebase.js";
 
-const endPoint = "http://localhost:8080";
+const endPoint = "http://localhost:3000/";
+// const endPoint = "https://iot-system-h3-server.herokuapp.com/";
+
 const chartContainer = document.querySelector(".chart-container");
 const optionMenus = document.querySelectorAll(".select-menu"),
   selectBtns = document.querySelectorAll(".select-btn"),
@@ -179,7 +181,7 @@ const optionElementCreated = (data) => {
   return liOption;
 };
 
-await fetch(endPoint + "/location")
+await fetch(endPoint + "location")
   .then((response) => response.json())
   .then((data) => {
     const nameLocationList = Object.keys(data);
@@ -237,10 +239,8 @@ get(child(ref(database), "location")).then((snapshot) => {
 
         const nameNodeList = Object.keys(nodeList[index]);
         const valueNodeList = Object.values(nodeList[index]);
-        console.log(valueNodeList);
 
         optionsSelects[1].innerHTML = "";
-        // optionsSelects[1].appendChild(optionElementCreated("All"));
         nameNodeList.forEach((nameNode) => {
           optionsSelects[1].appendChild(optionElementCreated(nameNode));
         });
@@ -253,9 +253,7 @@ get(child(ref(database), "location")).then((snapshot) => {
             optionMenus[1].classList.remove("active");
 
             const sensorNameList = Object.keys(valueNodeList[j].sensors);
-            console.log(sensorNameList);
             optionsSelects[2].innerHTML = "";
-            // optionsSelects[2].appendChild(optionElementCreated("All"));
             sensorNameList.forEach((sensorName) => {
               optionsSelects[2].appendChild(optionElementCreated(sensorName));
             });
@@ -267,9 +265,8 @@ get(child(ref(database), "location")).then((snapshot) => {
                 sBtn_texts[2].innerText = selectedOption;
                 chartSelect.sensor = selectedOption;
                 optionMenus[2].classList.remove("active");
-                console.log(chartSelect);
 
-                fetch(endPoint + "/location")
+                fetch(endPoint + "location")
                   .then((response) => response.json())
                   .then((data) => {
                     const valueLocation = data[chartSelect.location];
@@ -315,8 +312,6 @@ get(child(ref(database), "location")).then((snapshot) => {
                           date1,
                           date2
                         );
-
-                        console.log(dataRange);
 
                         chartContainer.innerHTML = "";
                         chartContainer.appendChild(

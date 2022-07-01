@@ -1,4 +1,6 @@
-const endPoint = "http://127.0.0.1:8080";
+const endPoint = "http://127.0.0.1:3000/";
+// const endPoint = "https://iot-system-h3-server.herokuapp.com/";
+
 const socket = io(endPoint);
 
 const LIST_SENSOR = ["co", "humi", "noise", "shine", "temp", "uv"];
@@ -113,7 +115,7 @@ const renderHistory = (data) => {
 };
 
 const tableMain = document.querySelector(".table-main");
-fetch(endPoint + "/history")
+fetch(endPoint + "history")
   .then((response) => response.json())
   .then((data) => {
     renderHistory(data);
