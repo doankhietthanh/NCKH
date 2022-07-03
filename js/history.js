@@ -1,5 +1,5 @@
-const endPoint = "http://127.0.0.1:3000/";
-// const endPoint = "https://iot-system-h3-server.herokuapp.com/";
+// const endPoint = "http://127.0.0.1:3000/";
+const endPoint = "https://iot-system-h3-server.herokuapp.com/";
 
 const socket = io(endPoint);
 

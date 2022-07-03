@@ -5,8 +5,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
 import { database } from "./firebase.js";
 
-const endPoint = "http://localhost:3000/";
-// const endPoint = "https://iot-system-h3-server.herokuapp.com/";
+// const endPoint = "http://localhost:3000/";
+const endPoint = "https://iot-system-h3-server.herokuapp.com/";
 
 const chartContainer = document.querySelector(".chart-container");
 const optionMenus = document.querySelectorAll(".select-menu"),
