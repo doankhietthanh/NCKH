@@ -164,6 +164,10 @@ const chartElementCreated = (
 
   const myChart = new Chart(canvas, config);
 
+  myChart.data.datasets.filter((dataset) => {
+    return (dataset.hidden = dataset.label === "shine" ? true : false);
+  });
+
   return chartDiv;
 };
 
