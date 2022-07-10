@@ -1,8 +1,9 @@
 // const endPoint = "http://127.0.0.1:3000/";
 const endPoint = "https://iot-system-h3-server.herokuapp.com/";
+const loadingContainer = document.querySelector(".loading");
 
 const socket = io(endPoint, {
-  withCredentials: true,
+  // withCredentials: true,
 });
 
 const LIST_SENSOR = ["co", "humi", "noise", "shine", "temp", "uv"];
@@ -116,11 +117,30 @@ const renderHistory = (data) => {
   });
 };
 
+const countDown = (time) => {
+  setInterval(() => {
+    if (time >= 0) {
+      document.getElementById("countdown").textContent = time / 1000 + " s";
+      time -= 1000;
+    } else {
+      clearInterval();
+    }
+  }, 1000);
+};
+
+loadingContainer.style.display = "block";
 const tableMain = document.querySelector(".table-main");
-fetch(endPoint + "history")
+await fetch(endPoint + "history")
   .then((response) => response.json())
   .then((data) => {
-    renderHistory(data);
+    countDown(3000);
+    setTimeout(() => {
+      loadingContainer.style.display = "none";
+      renderHistory(data);
+    }, 4000);
+  })
+  .catch((err) => {
+    console.log("Error: ", err);
   });
 
 socket.on("history", (data) => {

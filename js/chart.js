@@ -8,7 +8,10 @@ import { database } from "./firebase.js";
 // const endPoint = "http://localhost:3000/";
 const endPoint = "https://iot-system-h3-server.herokuapp.com/";
 
+const loadingContainer = document.querySelector(".loading");
 const chartContainer = document.querySelector(".chart-container");
+const chartSelector = document.querySelector(".chart-selector");
+const timeRangeSelector = document.querySelector(".inp-wrapper");
 const optionMenus = document.querySelectorAll(".select-menu"),
   selectBtns = document.querySelectorAll(".select-btn"),
   sBtn_texts = document.querySelectorAll(".sBtn-text"),
@@ -121,7 +124,10 @@ const chartElementCreated = (
         tension: 0.1,
       };
       datasetList.push(dataset);
-    } else {
+      datasetList.filter((dataset) => {
+        return (dataset.hidden = dataset.label === "shine" ? true : false);
+      });
+    } else if (event === "sensor") {
       const dataset = {
         label: nameSensor,
         backgroundColor: getColorSensor(nameSensor),
@@ -164,10 +170,6 @@ const chartElementCreated = (
 
   const myChart = new Chart(canvas, config);
 
-  myChart.data.datasets.filter((dataset) => {
-    return (dataset.hidden = dataset.label === "shine" ? true : false);
-  });
-
   return chartDiv;
 };
 
@@ -185,46 +187,165 @@ const optionElementCreated = (data) => {
   return liOption;
 };
 
+const countDown = (time) => {
+  setInterval(() => {
+    if (time >= 0) {
+      document.getElementById("countdown").textContent = time / 1000 + " s";
+      time -= 1000;
+    } else {
+      clearInterval();
+    }
+  }, 1000);
+};
+
+loadingContainer.style.display = "block";
 await fetch(endPoint + "location")
   .then((response) => response.json())
   .then((data) => {
+    countDown(3000);
+
     const nameLocationList = Object.keys(data);
     const nodeList = Object.values(data);
 
-    nameLocationList.forEach((nameLocation, index) => {
-      const nameNodeList = Object.keys(nodeList[index]);
-      const valueNodeList = Object.values(nodeList[index]);
+    setTimeout(() => {
+      loadingContainer.style.display = "none";
+      nameLocationList.forEach((nameLocation, index) => {
+        const nameNodeList = Object.keys(nodeList[index]);
+        const valueNodeList = Object.values(nodeList[index]);
 
-      nameNodeList.forEach((nameNode, index) => {
-        const timeList = Object.keys(valueNodeList[index]);
-        const sensorList = Object.values(valueNodeList[index]);
+        nameNodeList.forEach((nameNode, index) => {
+          const timeList = Object.keys(valueNodeList[index]);
+          const sensorList = Object.values(valueNodeList[index]);
+
+          let nameSensors = [];
+          let valueSensorList = [];
+          timeList.forEach((time, index) => {
+            nameSensors = Object.keys(sensorList[index]);
+            const valueSensor = Object.values(sensorList[index]);
+            valueSensorList.push(valueSensor);
+          });
+
+          chartContainer.appendChild(
+            chartElementCreated(
+              "all",
+              nameLocation,
+              nameNode,
+              timeList,
+              nameSensors,
+              valueSensorList
+            )
+          );
+        });
+      });
+    }, 4000);
+  });
+
+const drawChart = (location, node, sensor, rangeTime) => {
+  console.log(location, node, sensor, rangeTime);
+  fetch(endPoint + "location")
+    .then((response) => response.json())
+    .then((data) => {
+      const nameLocationList = location ? [location] : Object.keys(data);
+      const nodeList = Object.values(data);
+
+      chartContainer.innerHTML = "";
+
+      nameLocationList.forEach((nameLocation, index) => {
+        const nameNodeList = node
+          ? [node]
+          : location
+          ? Object.keys(data[location])
+          : Object.keys(nodeList[index]);
 
         let nameSensors = [];
         let valueSensorList = [];
-        timeList.forEach((time, index) => {
-          nameSensors = Object.keys(sensorList[index]);
-          const valueSensor = Object.values(sensorList[index]);
-          valueSensorList.push(valueSensor);
-        });
 
-        chartContainer.appendChild(
-          chartElementCreated(
-            "all",
-            nameLocation,
-            nameNode,
+        if (sensor) {
+          const valueLocation = data[location];
+          const valueNodeList = valueLocation[node];
+          const timeList = Object.keys(valueNodeList);
+          const sensorList = Object.values(valueNodeList);
+          nameSensors = [sensor];
+          sensorList.forEach((list) => {
+            valueSensorList.push(list[sensor]);
+          });
+
+          const dataRange = getRangeValueWithTime(
             timeList,
-            nameSensors,
-            valueSensorList
-          )
-        );
+            valueSensorList,
+            rangeTime[0],
+            rangeTime[1]
+          );
+
+          chartContainer.appendChild(
+            chartElementCreated(
+              "sensor",
+              location,
+              node,
+              dataRange.timeRange || timeList,
+              nameSensors,
+              dataRange.valueRange || valueSensorList
+            )
+          );
+        } else {
+          const valueNodeList = location
+            ? Object.values(data[location])
+            : Object.values(nodeList[index]);
+
+          nameNodeList.forEach((nameNode, i) => {
+            const timeList = Object.keys(valueNodeList[i]);
+            const sensorList = Object.values(valueNodeList[i]);
+
+            timeList.forEach((time, j) => {
+              nameSensors = Object.keys(sensorList[j]);
+              const valueSensor = Object.values(sensorList[j]);
+              valueSensorList.push(valueSensor);
+            });
+
+            const dataRange = getRangeValueWithTime(
+              timeList,
+              valueSensorList,
+              rangeTime[0],
+              rangeTime[1]
+            );
+
+            chartContainer.appendChild(
+              chartElementCreated(
+                "all",
+                location || nameLocation,
+                node || nameNode,
+                dataRange.timeRange || timeList,
+                nameSensors,
+                dataRange.valueRange || valueSensorList
+              )
+            );
+          });
+        }
       });
     });
-  });
+};
 
 get(child(ref(database), "location")).then((snapshot) => {
   const data = snapshot.val();
   const nameLocationList = Object.keys(data);
   const nodeList = Object.values(data);
+
+  let date1, date2;
+  timeRangeSelector.addEventListener("change", (e) => {
+    date1 = convertDateToTimestamp(
+      document.getElementById("date-1-date").value,
+      document.getElementById("date-1-time").value
+    );
+    date2 = convertDateToTimestamp(
+      document.getElementById("date-2-date").value,
+      document.getElementById("date-2-time").value
+    );
+
+    drawChart(chartSelect.location, chartSelect.node, chartSelect.sensor, [
+      date1,
+      date2,
+    ]);
+  });
 
   optionsSelects.forEach(() => {
     optionsSelects[0].innerHTML = "";
@@ -245,7 +366,11 @@ get(child(ref(database), "location")).then((snapshot) => {
         const valueNodeList = Object.values(nodeList[index]);
 
         optionsSelects[1].innerHTML = "";
-        nameNodeList.forEach((nameNode) => {
+        drawChart(chartSelect.location, chartSelect.node, chartSelect.sensor, [
+          date1,
+          date2,
+        ]);
+        nameNodeList.forEach((nameNode, i) => {
           optionsSelects[1].appendChild(optionElementCreated(nameNode));
         });
 
@@ -255,6 +380,13 @@ get(child(ref(database), "location")).then((snapshot) => {
             sBtn_texts[1].innerText = selectedOption;
             chartSelect.node = selectedOption;
             optionMenus[1].classList.remove("active");
+
+            drawChart(
+              chartSelect.location,
+              chartSelect.node,
+              chartSelect.sensor,
+              [date1, date2]
+            );
 
             const sensorNameList = Object.keys(valueNodeList[j].sensors);
             optionsSelects[2].innerHTML = "";
@@ -270,66 +402,12 @@ get(child(ref(database), "location")).then((snapshot) => {
                 chartSelect.sensor = selectedOption;
                 optionMenus[2].classList.remove("active");
 
-                fetch(endPoint + "location")
-                  .then((response) => response.json())
-                  .then((data) => {
-                    const valueLocation = data[chartSelect.location];
-                    const valueNodeList = valueLocation[chartSelect.node];
-
-                    const timeList = Object.keys(valueNodeList);
-                    const sensorList = Object.values(valueNodeList);
-
-                    let valueSensorList = [];
-
-                    sensorList.forEach((sensor) => {
-                      valueSensorList.push(sensor[chartSelect.sensor]);
-                    });
-
-                    chartContainer.innerHTML = "";
-                    chartContainer.appendChild(
-                      chartElementCreated(
-                        "sensor",
-                        chartSelect.location,
-                        [chartSelect.node],
-                        timeList,
-                        [chartSelect.sensor],
-                        valueSensorList
-                      )
-                    );
-
-                    document
-                      .querySelector(".inp-wrapper")
-                      .addEventListener("change", (e) => {
-                        let date1 = convertDateToTimestamp(
-                          document.getElementById("date-1-date").value,
-                          document.getElementById("date-1-time").value
-                        );
-
-                        let date2 = convertDateToTimestamp(
-                          document.getElementById("date-2-date").value,
-                          document.getElementById("date-2-time").value
-                        );
-
-                        const dataRange = getRangeValueWithTime(
-                          timeList,
-                          valueSensorList,
-                          date1,
-                          date2
-                        );
-
-                        chartContainer.innerHTML = "";
-                        chartContainer.appendChild(
-                          chartElementCreated(
-                            "sensor",
-                            chartSelect.location,
-                            [chartSelect.node],
-                            dataRange.timeRange,
-                            [chartSelect.sensor],
-                            dataRange.valueRange
-                          )
-                        );
-                      });
-                  });
+                drawChart(
+                  chartSelect.location,
+                  chartSelect.node,
+                  chartSelect.sensor,
+                  [date1, date2]
+                );
               });
             });
           });
