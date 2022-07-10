@@ -241,7 +241,6 @@ await fetch(endPoint + "location")
   });
 
 const drawChart = (location, node, sensor, rangeTime) => {
-  console.log(location, node, sensor, rangeTime);
   fetch(endPoint + "location")
     .then((response) => response.json())
     .then((data) => {
@@ -282,9 +281,11 @@ const drawChart = (location, node, sensor, rangeTime) => {
               "sensor",
               location,
               node,
-              dataRange.timeRange || timeList,
+              dataRange.timeRange.length == 0 ? timeList : dataRange.timeRange,
               nameSensors,
-              dataRange.valueRange || valueSensorList
+              dataRange.valueRange.length == 0
+                ? valueSensorList
+                : dataRange.valueRange
             )
           );
         } else {
@@ -314,9 +315,13 @@ const drawChart = (location, node, sensor, rangeTime) => {
                 "all",
                 location || nameLocation,
                 node || nameNode,
-                dataRange.timeRange || timeList,
+                dataRange.timeRange.length == 0
+                  ? timeList
+                  : dataRange.timeRange,
                 nameSensors,
-                dataRange.valueRange || valueSensorList
+                dataRange.valueRange.length == 0
+                  ? valueSensorList
+                  : dataRange.valueRange
               )
             );
           });
