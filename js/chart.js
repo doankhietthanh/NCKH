@@ -2,6 +2,7 @@ import {
   child,
   get,
   ref,
+  set,
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
 import { database } from "./firebase.js";
 
@@ -49,6 +50,8 @@ let chartSelect = {
   node: "",
   sensor: "",
 };
+
+set(ref(database, "location/SPKT/node_02/sensors/uv"), 1.04);
 
 const getColorSensor = (nameSensor) => {
   const color = LIST_COLOR.find((color) => {
@@ -207,37 +210,35 @@ await fetch(endPoint + "location")
     const nameLocationList = Object.keys(data);
     const nodeList = Object.values(data);
 
-    setTimeout(() => {
-      loadingContainer.style.display = "none";
-      nameLocationList.forEach((nameLocation, index) => {
-        const nameNodeList = Object.keys(nodeList[index]);
-        const valueNodeList = Object.values(nodeList[index]);
+    loadingContainer.style.display = "none";
+    nameLocationList.forEach((nameLocation, index) => {
+      const nameNodeList = Object.keys(nodeList[index]);
+      const valueNodeList = Object.values(nodeList[index]);
 
-        nameNodeList.forEach((nameNode, index) => {
-          const timeList = Object.keys(valueNodeList[index]);
-          const sensorList = Object.values(valueNodeList[index]);
+      nameNodeList.forEach((nameNode, index) => {
+        const timeList = Object.keys(valueNodeList[index]);
+        const sensorList = Object.values(valueNodeList[index]);
 
-          let nameSensors = [];
-          let valueSensorList = [];
-          timeList.forEach((time, index) => {
-            nameSensors = Object.keys(sensorList[index]);
-            const valueSensor = Object.values(sensorList[index]);
-            valueSensorList.push(valueSensor);
-          });
-
-          chartContainer.appendChild(
-            chartElementCreated(
-              "all",
-              nameLocation,
-              nameNode,
-              timeList,
-              nameSensors,
-              valueSensorList
-            )
-          );
+        let nameSensors = [];
+        let valueSensorList = [];
+        timeList.forEach((time, index) => {
+          nameSensors = Object.keys(sensorList[index]);
+          const valueSensor = Object.values(sensorList[index]);
+          valueSensorList.push(valueSensor);
         });
+
+        chartContainer.appendChild(
+          chartElementCreated(
+            "all",
+            nameLocation,
+            nameNode,
+            timeList,
+            nameSensors,
+            valueSensorList
+          )
+        );
       });
-    }, 1500);
+    });
   })
   .catch((err) => {
     countDown(10000);

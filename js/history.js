@@ -1,12 +1,18 @@
+import {
+  set,
+  ref,
+} from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
+import { database } from "./firebase.js";
+
 // const endPoint = "http://127.0.0.1:3000/";
 const endPoint = "https://iot-system-h3-server.herokuapp.com/";
 const loadingContainer = document.querySelector(".loading");
 
-const socket = io(endPoint, {
-  // withCredentials: true,
-});
+const socket = io(endPoint);
 
 const LIST_SENSOR = ["co", "humi", "noise", "shine", "temp", "uv"];
+
+set(ref(database, "location/SPKT/node_02/sensors/uv"), 1.03);
 
 const TableRowElementCreated = (time, location, nodes, sensors) => {
   const tableRowLi = document.createElement("li");
@@ -134,10 +140,8 @@ await fetch(endPoint + "history")
   .then((response) => response.json())
   .then((data) => {
     // countDown(3000);
-    setTimeout(() => {
-      renderHistory(data);
-      loadingContainer.style.display = "none";
-    }, 1500);
+    renderHistory(data);
+    loadingContainer.style.display = "none";
   })
   .catch((err) => {
     countDown(10000);
