@@ -133,14 +133,18 @@ const tableMain = document.querySelector(".table-main");
 await fetch(endPoint + "history")
   .then((response) => response.json())
   .then((data) => {
-    countDown(3000);
+    // countDown(3000);
     setTimeout(() => {
-      loadingContainer.style.display = "none";
       renderHistory(data);
-    }, 4000);
+      loadingContainer.style.display = "none";
+    }, 1500);
   })
   .catch((err) => {
-    console.log("Error: ", err);
+    countDown(10000);
+    setTimeout(() => {
+      loadingContainer.style.display = "none";
+      document.querySelector(".error-container").style.display = "block";
+    }, 11000);
   });
 
 socket.on("history", (data) => {

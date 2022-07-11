@@ -8,8 +8,14 @@ import { database } from "./firebase.js";
 
 const containerElement = document.querySelector(".container");
 let maxLength = localStorage.getItem("maxLength");
-
 let docsValueSensorsThreshold = [];
+
+const loadingContainer = document.querySelector(".loading");
+loadingContainer.style.display = "block";
+setTimeout(() => {
+  loadingContainer.style.display = "none";
+}, 1500);
+
 onValue(ref(database, "settings/sensor"), (snapshot) => {
   docsValueSensorsThreshold = snapshot.val();
 });

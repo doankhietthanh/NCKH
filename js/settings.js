@@ -19,6 +19,12 @@ const optionMenu = document.querySelector(".select-menu"),
   selectBtn = optionMenu.querySelector(".select-btn"),
   sBtn_text = optionMenu.querySelector(".sBtn-text");
 
+const loadingContainer = document.querySelector(".loading");
+loadingContainer.style.display = "block";
+setTimeout(() => {
+  loadingContainer.style.display = "none";
+}, 1500);
+
 let locationColorSelect = {
   id: "",
   name: "",

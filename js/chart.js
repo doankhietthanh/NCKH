@@ -202,7 +202,7 @@ loadingContainer.style.display = "block";
 await fetch(endPoint + "location")
   .then((response) => response.json())
   .then((data) => {
-    countDown(3000);
+    // countDown(3000);
 
     const nameLocationList = Object.keys(data);
     const nodeList = Object.values(data);
@@ -237,7 +237,14 @@ await fetch(endPoint + "location")
           );
         });
       });
-    }, 4000);
+    }, 1500);
+  })
+  .catch((err) => {
+    countDown(10000);
+    setTimeout(() => {
+      loadingContainer.style.display = "none";
+      document.querySelector(".error-container").style.display = "block";
+    }, 11000);
   });
 
 const drawChart = (location, node, sensor, rangeTime) => {
