@@ -63,6 +63,7 @@ const getColorSensor = (nameSensor) => {
 };
 
 const convertDateToTimestamp = (date, hms) => {
+  if (!date || !hms) return;
   const dateTime = date.split("-");
   const time = hms.split(":");
 
@@ -95,6 +96,7 @@ const getRangeValueWithTime = (timeList, valueList, firstTime, lastTime) => {
 };
 
 const convertTimestampToDate = (timestamp) => {
+  if (!timestamp) return;
   const date = new Date(timestamp);
   const dateString = `${date.getDate()}/${
     date.getMonth() + 1
@@ -440,8 +442,8 @@ const socket = io(endPoint);
 socket.on("sensor", (data) => {
   console.log(data);
   LIST_CHART.forEach((chart) => {
-    if (concatIdChart(data.nameLocation, data.node) === chart.canvas.id) {
-      updateDataChart(chart, data.data.time, data.data.sensors);
+    if (concatIdChart(data.location, data.node) === chart.canvas.id) {
+      updateDataChart(chart, data.time, data.sensors);
     }
   });
 });
