@@ -157,8 +157,6 @@ const chartElementCreated = (
     },
   };
 
-  // console.log(nameLocation, nameNode, labels);
-
   const chartDiv = document.createElement("div");
   chartDiv.classList.add("chart");
   chartDiv.setAttribute("name", nameLocation);
@@ -440,10 +438,13 @@ get(child(ref(database), "location")).then((snapshot) => {
 const socket = io(endPoint);
 
 socket.on("sensor", (data) => {
-  console.log(data);
   LIST_CHART.forEach((chart) => {
     if (concatIdChart(data.location, data.node) === chart.canvas.id) {
-      updateDataChart(chart, data.time, data.sensors);
+      updateDataChart(
+        chart,
+        convertTimestampToDate(data.timestamp),
+        data.sensors
+      );
     }
   });
 });
@@ -454,8 +455,8 @@ const concatIdChart = (location, node) => {
 
 function updateDataChart(chart, label, data) {
   chart.data.labels.push(label);
-  chart.data.datasets.forEach((dataset) => {
-    dataset.data.push(data);
+  chart.data.datasets.forEach((dataset, index) => {
+    dataset.data.push(Object.values(data)[index]);
   });
   chart.update();
 }
