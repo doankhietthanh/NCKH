@@ -51,6 +51,8 @@ let chartSelect = {
   sensor: "",
 };
 
+let LIST_CHART = [];
+
 set(ref(database, "location/SPKT/node_02/sensors/uv"), 1.04);
 
 const getColorSensor = (nameSensor) => {
@@ -153,6 +155,8 @@ const chartElementCreated = (
     },
   };
 
+  // console.log(nameLocation, nameNode, labels);
+
   const chartDiv = document.createElement("div");
   chartDiv.classList.add("chart");
   chartDiv.setAttribute("name", nameLocation);
@@ -165,13 +169,14 @@ const chartElementCreated = (
   chartContainerDiv.classList.add("chart-container");
 
   const canvas = document.createElement("canvas");
-  canvas.id = "myChart";
+  canvas.id = "chart-" + nameLocation + "-" + nameNode;
   chartContainerDiv.appendChild(canvas);
 
   chartDiv.appendChild(chartTitleDiv);
   chartDiv.appendChild(chartContainerDiv);
 
   const myChart = new Chart(canvas, config);
+  LIST_CHART.push(myChart);
 
   return chartDiv;
 };
@@ -429,3 +434,26 @@ get(child(ref(database), "location")).then((snapshot) => {
     });
   });
 });
+
+const socket = io(endPoint);
+
+socket.on("sensor", (data) => {
+  console.log(data);
+  LIST_CHART.forEach((chart) => {
+    if (concatIdChart(data.nameLocation, data.node) === chart.canvas.id) {
+      updateDataChart(chart, data.data.time, data.data.sensors);
+    }
+  });
+});
+
+const concatIdChart = (location, node) => {
+  return "chart-" + location + "-" + node;
+};
+
+function updateDataChart(chart, label, data) {
+  chart.data.labels.push(label);
+  chart.data.datasets.forEach((dataset) => {
+    dataset.data.push(data);
+  });
+  chart.update();
+}
