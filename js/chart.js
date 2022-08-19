@@ -460,3 +460,11 @@ function updateDataChart(chart, label, data) {
   });
   chart.update();
 }
+
+// setInterval(() => {
+//   socket.emit("chart", {
+//     location: chartSelect.location,
+//     node: chartSelect.node,
+//     sensor: chartSelect.sensor,
+//   });
+// }, 5000);

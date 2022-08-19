@@ -3,8 +3,13 @@ import {
   ref,
   get,
   child,
+  remove,
 } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
 import { database } from "./firebase.js";
+
+// const endPoint = "http://127.0.0.1:3000/";
+const endPoint = "https://iot-system-h3-server.herokuapp.com/";
+const socket = io(endPoint);
 
 const containerElement = document.querySelector(".container");
 let maxLength = localStorage.getItem("maxLength");
@@ -155,6 +160,35 @@ const cardElementCreated = (color, name, listNode) => {
   divFront.appendChild(divGatewayIcon);
   divFront.appendChild(divGatewayContainer);
   divStrip.appendChild(divStripTop);
+
+  // Remove card when click
+  const divRemoveContainer = document.createElement("div");
+  const divRemoveBtn = document.createElement("div");
+  divRemoveContainer.classList.add("remove-container");
+  divRemoveBtn.classList.add("remove-card-btn");
+  divRemoveBtn.innerHTML = "&times;";
+  divRemoveBtn.classList.add("remove-btn");
+  divRemoveContainer.appendChild(divRemoveBtn);
+
+  divFront.appendChild(divRemoveContainer);
+  divRemoveBtn.addEventListener("click", () => {
+    if (confirm("Are you sure to delete this gateway?")) {
+      containerElement.removeChild(divCard);
+      remove(child(ref(database, "location"), name));
+      socket.emit("remove-location", name);
+      window.location.reload();
+    } else {
+      //do thing
+    }
+  });
+  divRemoveBtn.addEventListener("mouseover", () => {
+    divRemoveContainer.style = "background: #d83131eb; color: #fff;";
+  });
+  divRemoveBtn.addEventListener("mouseout", () => {
+    divRemoveContainer.style = "background: transparent; color: #000;";
+  });
+
+  //
 
   divCard.setAttribute("name", name);
 
