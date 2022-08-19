@@ -1,4 +1,9 @@
-// const endPoint = "http://127.0.0.1:3000/";
+import {
+  ref,
+  set,
+} from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js";
+import { database } from "./firebase.js"; // const endPoint = "http://127.0.0.1:3000/";
+
 const endPoint = "https://iot-system-h3-server.herokuapp.com/";
 const loadingContainer = document.querySelector(".loading");
 
